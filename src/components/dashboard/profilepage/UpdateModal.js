@@ -2,80 +2,36 @@ import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import axios from 'axios';
-import api from './api'; // Import the api.js file
 
-const ProfilePage = () => {
-  const [profileData, setProfileData] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [updatedProfileData, setUpdatedProfileData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    address: '',
-    mobile_no: '',
-    bank_name: '',
-    branch: '',
-    ifsc_code: '',
-    account_number: '',
-    company_name: '',
-    tin: '',
-    pan_number: '',
-  });
+const UpdateModal = ({ profileData, handleCloseModal, setProfileData }) => {
+  const [updatedProfileData, setUpdatedProfileData] = useState(profileData);
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Fetch user profile data when the component mounts
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await api.getUserProfile();
-        setProfileData(response); // Assuming the response contains user profile data
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-        // Handle error states here if needed
-      }
-    };
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
 
-    fetchUserProfile();
-  }, []); // Empty dependency array ensures the effect runs once after the initial render
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-    // Set initial form data when the modal opens
-    setUpdatedProfileData(profileData);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+    // Assuming you have implemented proper authentication and have access to the user ID in the session
+    axios.put('/profile', updatedProfileData)
+      .then(response => {
+        setProfileData(updatedProfileData);
+        setSuccessMessage('Profile updated successfully.');
+        handleCloseModal();
+      })
+      .catch(error => console.error('Error updating user data:', error));
   };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setUpdatedProfileData((prevData) => ({
+    setUpdatedProfileData(prevData => ({
       ...prevData,
-      [name]: value,
+      [name]: value
     }));
-  };
-
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      // Send updated profile data to the API
-      const response = await api.updateProfile(updatedProfileData);
-      // Assuming the response contains updated user profile data
-      setProfileData(response);
-      setSuccessMessage('Profile updated successfully.');
-      // Close the modal after successful update
-      handleCloseModal();
-    } catch (error) {
-      console.error('Error updating user profile:', error);
-      // Handle error states here if needed
-    }
   };
 
   const handleCloseSnackbar = () => {
     setSuccessMessage('');
   };
-  
+
   return (
     <Box sx={{
       position: 'absolute',

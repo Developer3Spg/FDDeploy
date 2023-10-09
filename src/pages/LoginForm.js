@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Grid, Snackbar, Link, CircularProgress } from '@mui/material';
-import api from './api';
 
 const LoginForm = ({ handleLogin }) => {
   const [formData, setFormData] = useState({
@@ -34,22 +33,27 @@ const LoginForm = ({ handleLogin }) => {
     const isValid = validateForm();
     if (isValid) {
       try {
-        setIsLoading(true);
-        const response = await api.login(formData); // Use the login function from api.js
+        setIsLoading(true); 
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
 
-        if (response.success) {
-          console.log('Login successful:', response.message); // You can handle the success message here
+        if (response.ok) {
+          console.log('Form submitted:', formData);
           setShowErrorMessage(false);
           handleLogin();
         } else {
-          console.log('Login failed:', response.error); // You can handle the error message here
+          console.log('Login failed');
           setShowErrorMessage(true);
         }
       } catch (error) {
         console.error('Error during login:', error);
-        setShowErrorMessage(true); // Handle general error cases
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); 
       }
     }
   };

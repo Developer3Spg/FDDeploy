@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Grid, Typography, Container, Box, useMediaQuery, CircularProgress, Modal, Button } from '@mui/material';
 import DashboardNav from '../../components/dashboard/DashboardNav';
+import axios from 'axios';
 import Avataaars from 'avataaars';
 import UpdateModal from "../../components/dashboard/profilepage/UpdateModal";
-import api from '../../path/to/api'; // Import your api.js file
 
 const ProfilePage = ({ isLoggedIn }) => {
   const [profileData, setProfileData] = useState(null);
@@ -12,18 +12,15 @@ const ProfilePage = ({ isLoggedIn }) => {
   const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await api.getUserProfile();
-        setProfileData(response); // Assuming the response contains user profile data
+    axios.get('/profile')
+      .then(response => {
+        setProfileData(response.data);
         setIsLoading(false); // Set loading state to false when data is received
-      } catch (error) {
+      })
+      .catch(error => {
         console.error('Error fetching user data:', error);
         setIsLoading(false); // Set loading state to false on error as well
-      }
-    };
-
-    fetchUserProfile();
+      });
   }, []);
 
   const handleOpenModal = () => {
