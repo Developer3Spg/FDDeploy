@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import api from './api';
 import {
   Container,
   TextField,
@@ -58,12 +59,11 @@ const RegistrationForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    axios
-      .post('/register', formData)
+  
+    api.register(formData)
       .then(function (response) {
-        console.log(response.data);
-        setSuccessMessage(response.data.message);
+        console.log(response);
+        setSuccessMessage(response.message); // Assuming the API response has a 'message' property
         setFormData({
           first_name: '',
           last_name: '',
@@ -85,10 +85,13 @@ const RegistrationForm = () => {
         });
       })
       .catch(function (error) {
-        console.error(error.response?.data?.error || 'Unknown error');
-        setErrorMessage(error.response?.data?.error || 'Unknown error');
+        console.error(error);
+        setErrorMessage(error.message || 'Unknown error'); // Assuming the API error response has a 'message' property
       });
   };
+  
+
+
 
   const handleCloseSnackbar = () => {
     setErrorMessage('');
