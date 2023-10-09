@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://mezz-back.onrender.com/'; // Update with your Flask server address
+const API_BASE_URL = 'https://mezz-back.onrender.com'; // Update with your Flask server address
 
 const api = {
   register: async (userData) => {
