@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import api from './api'; // Import your api.js file
+import api from '../../../pages/api';
+
 
 const UpdateModal = ({ profileData, handleCloseModal, setProfileData }) => {
   const [updatedProfileData, setUpdatedProfileData] = useState(profileData);
