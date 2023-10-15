@@ -1,27 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import api from '../../../pages/api';
-
+import axios from 'axios';
 
 const UpdateModal = ({ profileData, handleCloseModal, setProfileData }) => {
   const [updatedProfileData, setUpdatedProfileData] = useState(profileData);
   const [successMessage, setSuccessMessage] = useState('');
 
-  useEffect(() => {
-    // Fetch user profile data when the component mounts
-    api.getUserProfile()
-      .then(data => {
-        setUpdatedProfileData(data); // Set user profile data in the state
-      })
-      .catch(error => console.error('Error fetching user profile:', error));
-  }, []); // Empty dependency array ensures the effect runs once when component mounts
-
   const handleFormSubmit = (event) => {
     event.preventDefault();
 
-    // Update user profile using the API call
-    api.updateProfile(updatedProfileData)
+    // Assuming you have implemented proper authentication and have access to the user ID in the session
+    axios.put('/profile', updatedProfileData)
       .then(response => {
         setProfileData(updatedProfileData);
         setSuccessMessage('Profile updated successfully.');
@@ -41,7 +31,6 @@ const UpdateModal = ({ profileData, handleCloseModal, setProfileData }) => {
   const handleCloseSnackbar = () => {
     setSuccessMessage('');
   };
-
 
   return (
     <Box sx={{

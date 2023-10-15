@@ -1,140 +1,165 @@
-const API_BASE_URL = 'https://mezz-back.onrender.com'; // Update with your Flask server address
+// api.js
+const API_BASE_URL = 'http://localhost:5000'; // Update with your production URL
 
 const api = {
-  register: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/register`, {
+  registerUser: (userData) => {
+    return fetch(`${API_BASE_URL}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(userData),
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  login: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/login`, {
+  login: (userData) => {
+    return fetch(`${API_BASE_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(userData),
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  getUserProfile: async () => {
-    const response = await fetch(`${API_BASE_URL}/profile`, {
+  getProfileData: () => {
+    return fetch(`${API_BASE_URL}/profile`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
       },
-    });
-    return response.json();
+      credentials: 'include', // Include credentials (e.g., cookies)
+    }).then((response) => response.json());
   },
 
-  updateProfile: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/profile`, {
+  updateProfileData: (userData) => {
+    return fetch(`${API_BASE_URL}/profile`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
       },
       body: JSON.stringify(userData),
-    });
-    return response.json();
+      credentials: 'include', // Include credentials (e.g., cookies)
+    }).then((response) => response.json());
   },
 
-  uploadInvoice: async (formData) => {
-    const response = await fetch(`${API_BASE_URL}/upload_invoice`, {
+  uploadInvoice: (formData) => {
+    return fetch(`${API_BASE_URL}/upload_invoice`, {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
+      },
       body: formData,
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  submitInvoice: async (invoiceData) => {
-    const response = await fetch(`${API_BASE_URL}/submit_invoice`, {
+  submitInvoice: (invoiceData) => {
+    return fetch(`${API_BASE_URL}/submit_invoice`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
       },
       body: JSON.stringify(invoiceData),
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  getApprovedInvoices: async () => {
-    const response = await fetch(`${API_BASE_URL}/approved_invoices`, {
+  approvedInvoices: () => {
+    return fetch(`${API_BASE_URL}/approved_invoices`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
       },
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  getPendingApprovalInvoices: async () => {
-    const response = await fetch(`${API_BASE_URL}/pending_approval_invoices`, {
+  pendingApprovalInvoices: () => {
+    return fetch(`${API_BASE_URL}/pending_approval_invoices`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
       },
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  deleteInvoice: async (invoiceId) => {
-    const response = await fetch(`${API_BASE_URL}/invoices/${invoiceId}`, {
+  deleteInvoice: (invoiceId) => {
+    return fetch(`${API_BASE_URL}/invoices/${invoiceId}`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
       },
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  sendForApproval: async (invoiceId) => {
-    const response = await fetch(`${API_BASE_URL}/invoices/pending_approval_pdfs/${invoiceId}`, {
+  sendForApproval: (invoiceId) => {
+    return fetch(`${API_BASE_URL}/invoices/pending_approval_pdfs/${invoiceId}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
       },
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  cameForApproval: async () => {
-    const response = await fetch(`${API_BASE_URL}/came_for_approval`, {
+  cameForApproval: () => {
+    return fetch(`${API_BASE_URL}/came_for_approval`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
       },
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  approveInvoice: async (invoiceId) => {
-    const response = await fetch(`${API_BASE_URL}/approve_invoice/${invoiceId}`, {
+  approveInvoice: (invoiceId) => {
+    return fetch(`${API_BASE_URL}/approve_invoice/${invoiceId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
+      },
+    }).then((response) => response.json());
+  },
+
+  tokens: () => {
+    return fetch(`${API_BASE_URL}/tokens`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
+      },
+    }).then((response) => response.json());
+  },
+
+  fetchInvoiceData: (invoiceId) => {
+    return fetch(`${API_BASE_URL}/fetch_invoice_data?invoice_id=${invoiceId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
+      },
+    }).then((response) => response.json());
+  },
+
+  validateMintTokens: (data) => {
+    return fetch(`${API_BASE_URL}/validate_mint_tokens`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-      },
-    });
-    return response.json();
-  },
-
-  validateMintTokens: async (data) => {
-    const response = await fetch(`${API_BASE_URL}/validate_mint_tokens`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
       },
       body: JSON.stringify(data),
-    });
-    return response.json();
+    }).then((response) => response.json());
   },
 
-  
+  redeemTokens: (data) => {
+    return fetch(`${API_BASE_URL}/redeem_tokens`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Set the user's token
+      },
+      body: JSON.stringify(data),
+    }).then((response) => response.json());
+  },
+
+  // Add more API calls for other endpoints as needed
 };
 
 export default api;

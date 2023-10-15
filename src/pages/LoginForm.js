@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Grid, Snackbar, Link, CircularProgress } from '@mui/material';
-import api from './api'; // Import the api.js file
 
 const LoginForm = ({ handleLogin }) => {
   const [formData, setFormData] = useState({
@@ -34,13 +33,17 @@ const LoginForm = ({ handleLogin }) => {
     const isValid = validateForm();
     if (isValid) {
       try {
-        setIsLoading(true);
-        
-        // Call the login function from api.js
-        const response = await api.login(formData);
-        
-        if (response.message === 'Login successful') {
-          console.log('Login successful');
+        setIsLoading(true); 
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          console.log('Form submitted:', formData);
           setShowErrorMessage(false);
           handleLogin();
         } else {
@@ -49,9 +52,8 @@ const LoginForm = ({ handleLogin }) => {
         }
       } catch (error) {
         console.error('Error during login:', error);
-        setShowErrorMessage(true);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); 
       }
     }
   };
