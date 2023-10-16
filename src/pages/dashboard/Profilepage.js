@@ -5,14 +5,32 @@ import axiosInstance from '../axios.js'; // Import your Axios instance
 import Avataaars from 'avataaars';
 import UpdateModal from "../../components/dashboard/profilepage/UpdateModal";
 
-const ProfilePage = ({ isLoggedIn }) => {
+const ProfilePage = () => {
   const [profileData, setProfileData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
   const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
 
   useEffect(() => {
-    // Use the Axios instance to make the GET request
+    // Use the Axios instance to make the authentication check
+    axiosInstance.get('/login')
+      .then(response => {
+        if (!response.data.error) {
+          // User is authenticated, fetch profile data
+          fetchProfileData();
+        } else {
+          // User is not authenticated, redirect to the login page
+          window.location.href = '/login'; // You can replace this with your desired way of redirecting
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching authentication status:', error);
+        setIsLoading(false); // Set loading state to false on error as well
+      });
+  }, []);
+
+  const fetchProfileData = () => {
+    // Use the Axios instance to make the GET request for profile data
     axiosInstance.get('/profile')
       .then(response => {
         setProfileData(response.data);
@@ -22,7 +40,7 @@ const ProfilePage = ({ isLoggedIn }) => {
         console.error('Error fetching user data:', error);
         setIsLoading(false); // Set loading state to false on error as well
       });
-  }, []);
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
