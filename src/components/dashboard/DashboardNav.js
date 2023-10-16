@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import axiosInstance from '../../pages/axios';
 import {
   AppBar as MuiAppBar,
   Toolbar,
@@ -26,18 +27,45 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import Avataaars from 'avataaars';
 
-const DashboardNav = ({ isLoggedIn }) => {
+const DashboardNav = () => {
   const history = useHistory();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user's login status
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
   const handleLogoutClick = () => {
-    history.push('/login');
+    axiosInstance.get('/logout').then((response) => {
+      // Handle logout on the server, then update client state
+      setIsLoggedIn(false);
+      history.push('/login');
+    }).catch((error) => {
+      // Handle error
+    });
   };
+
+  // Function to check if the user is authenticated and redirect to login if not
+  const checkAuthentication = () => {
+    axiosInstance.get('/login').then((response) => {
+      if (!response.data.error) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+        history.push('/login');
+      }
+    }).catch((error) => {
+      // Handle error
+    });
+  };
+
+  // Ensure authentication status when component mounts
+  useEffect(() => {
+    checkAuthentication();
+  }, []);
+
 
   const navigationItems = [
     { label: 'Profile', icon: <AccountCircleIcon />, link: '/dashboard/profile' },
