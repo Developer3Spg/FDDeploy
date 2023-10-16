@@ -34,9 +34,7 @@ const LoginForm = ({ handleLogin }) => {
     const isValid = validateForm();
     if (isValid) {
       try {
-        setIsLoading(true);
-
-        // Use the Axios instance to make the POST request
+        setIsLoading(true);// Use the Axios instance to make the POST request
         const response = await axiosInstance.post('/login', formData);
 
         if (response.status === 200) {

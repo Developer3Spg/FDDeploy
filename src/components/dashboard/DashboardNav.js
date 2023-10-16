@@ -25,11 +25,32 @@ import HelpIcon from '@mui/icons-material/Help';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import Avataaars from 'avataaars';
+import axiosInstance from '../../pages/axios.js';
+import { useEffect } from 'react';
+
 
 const DashboardNav = ({ isLoggedIn }) => {
   const history = useHistory();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      // You can fetch user data and check authentication status using axiosInstance
+      axiosInstance
+        .get('/profile')
+        .then((response) => {
+          // User is authenticated, handle the data or set the state accordingly
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          // User is not authenticated, handle the error or redirect to the login page
+          setIsLoading(false);
+          history.push('/login');
+        });
+    }
+  }, [history, isLoggedIn]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
