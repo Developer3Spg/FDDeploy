@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import axiosInstance from './axios.js'; 
 import {
   Container,
   TextField,
@@ -58,7 +59,7 @@ const RegistrationForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
+    axiosInstance
       .post('/register', formData)
       .then(function (response) {
         console.log(response.data);
