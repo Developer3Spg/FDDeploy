@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Grid, Typography, Container, Box, useMediaQuery, CircularProgress, Modal, Button } from '@mui/material';
 import DashboardNav from '../../components/dashboard/DashboardNav';
-import axios from 'axios';
+import axiosInstance from './axios.js'; // Import your Axios instance
 import Avataaars from 'avataaars';
 import UpdateModal from "../../components/dashboard/profilepage/UpdateModal";
 
@@ -12,7 +12,8 @@ const ProfilePage = ({ isLoggedIn }) => {
   const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
 
   useEffect(() => {
-    axios.get('/profile')
+    // Use the Axios instance to make the GET request
+    axiosInstance.get('/profile')
       .then(response => {
         setProfileData(response.data);
         setIsLoading(false); // Set loading state to false when data is received
@@ -97,7 +98,7 @@ const ProfilePage = ({ isLoggedIn }) => {
                       <strong>Mobile No:</strong> {profileData.mobile_no}
                     </Typography>
                     <Typography variant="body1">
-                        <strong>Metamask Wallet Address:</strong> {profileData.metamask_address}
+                      <strong>Metamask Wallet Address:</strong> {profileData.metamask_address}
                     </Typography>
                   </Grid>
                 </Grid>

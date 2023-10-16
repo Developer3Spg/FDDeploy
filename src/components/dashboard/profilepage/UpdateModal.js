@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import axios from 'axios';
+import axiosInstance from './axios.js'; // Import your Axios instance
 
 const UpdateModal = ({ profileData, handleCloseModal, setProfileData }) => {
   const [updatedProfileData, setUpdatedProfileData] = useState(profileData);
@@ -10,8 +10,8 @@ const UpdateModal = ({ profileData, handleCloseModal, setProfileData }) => {
   const handleFormSubmit = (event) => {
     event.preventDefault();
 
-    // Assuming you have implemented proper authentication and have access to the user ID in the session
-    axios.put('/profile', updatedProfileData)
+    // Use the Axios instance to make the PUT request to update the user's profile data
+    axiosInstance.put('/profile', updatedProfileData)
       .then(response => {
         setProfileData(updatedProfileData);
         setSuccessMessage('Profile updated successfully.');

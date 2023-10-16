@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Grid, Snackbar, Link, CircularProgress } from '@mui/material';
+import axiosInstance from './axios.js'; // Import your Axios instance
 
 const LoginForm = ({ handleLogin }) => {
   const [formData, setFormData] = useState({
@@ -33,17 +34,13 @@ const LoginForm = ({ handleLogin }) => {
     const isValid = validateForm();
     if (isValid) {
       try {
-        setIsLoading(true); 
-        const response = await fetch('/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
+        setIsLoading(true);
 
-        if (response.ok) {
-          console.log('Form submitted:', formData);
+        // Use the Axios instance to make the POST request
+        const response = await axiosInstance.post('/login', formData);
+
+        if (response.status === 200) {
+          console.log('Login successful');
           setShowErrorMessage(false);
           handleLogin();
         } else {
@@ -52,8 +49,9 @@ const LoginForm = ({ handleLogin }) => {
         }
       } catch (error) {
         console.error('Error during login:', error);
+        setShowErrorMessage(true);
       } finally {
-        setIsLoading(false); 
+        setIsLoading(false);
       }
     }
   };
