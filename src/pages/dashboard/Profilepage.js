@@ -4,23 +4,25 @@ import DashboardNav from '../../components/dashboard/DashboardNav';
 import axiosInstance from '../axios.js'; // Import your Axios instance
 import Avataaars from 'avataaars';
 import UpdateModal from "../../components/dashboard/profilepage/UpdateModal";
+import { useHistory } from 'react-router-dom';
+
 
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
+  const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md')); 
 
   useEffect(() => {
     // Use the Axios instance to make the authentication check
-    axiosInstance.get('/login')
+    axiosInstance.get('/check-auth')
       .then(response => {
         if (!response.data.error) {
           // User is authenticated, fetch profile data
           fetchProfileData();
         } else {
           // User is not authenticated, redirect to the login page
-          window.location.href = '/login'; // You can replace this with your desired way of redirecting
+          history.push('/login');
         }
       })
       .catch(error => {
@@ -28,6 +30,8 @@ const ProfilePage = () => {
         setIsLoading(false); // Set loading state to false on error as well
       });
   }, []);
+
+  const history = useHistory();
 
   const fetchProfileData = () => {
     // Use the Axios instance to make the GET request for profile data

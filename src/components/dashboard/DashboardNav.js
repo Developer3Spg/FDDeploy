@@ -49,7 +49,7 @@ const DashboardNav = () => {
 
   // Function to check if the user is authenticated and redirect to login if not
   const checkAuthentication = () => {
-    axiosInstance.get('/login').then((response) => {
+    axiosInstance.get('/check-auth').then((response) => {
       if (!response.data.error) {
         setIsLoggedIn(true);
       } else {
@@ -61,11 +61,10 @@ const DashboardNav = () => {
     });
   };
 
-  // Ensure authentication status when component mounts
+  // Ensure authentication status when the component mounts
   useEffect(() => {
     checkAuthentication();
   }, []);
-
 
   const navigationItems = [
     { label: 'Profile', icon: <AccountCircleIcon />, link: '/dashboard/profile' },
