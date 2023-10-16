@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Grid, Typography, Container, Box, useMediaQuery, CircularProgress, Modal, Button } from '@mui/material';
 import DashboardNav from '../../components/dashboard/DashboardNav';
-import axiosInstance from './axios.js'; // Import your Axios instance
+import axiosInstance from '../axios.js'; // Import your Axios instance
 import Avataaars from 'avataaars';
 import UpdateModal from "../../components/dashboard/profilepage/UpdateModal";
 

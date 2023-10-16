@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import axiosInstance from './axios.js'; // Import your Axios instance
+import axiosInstance from '../../../pages/axios.js'; // Import your Axios instance
 
 const UpdateModal = ({ profileData, handleCloseModal, setProfileData }) => {
   const [updatedProfileData, setUpdatedProfileData] = useState(profileData);
