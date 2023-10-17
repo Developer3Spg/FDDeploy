@@ -16,7 +16,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     // Check if the user is authenticated by making a request to the server.
-    axiosInstance.get('/check-auth', { withCredentials: true }) // Ensure cookies are sent with the request
+    axiosInstance.get('/login', { withCredentials: true }) // Ensure cookies are sent with the request
       .then(response => {
         if (!response.data.error) {
           // User is authenticated, fetch profile data

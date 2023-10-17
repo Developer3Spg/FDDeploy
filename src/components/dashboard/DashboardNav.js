@@ -49,7 +49,7 @@ const DashboardNav = () => {
 
   // Function to check if the user is authenticated and redirect to login if not
   const checkAuthentication = () => {
-    axiosInstance.get('/check-auth').then((response) => {
+    axiosInstance.get('/login').then((response) => {
       if (!response.data.error) {
         setIsLoggedIn(true);
       } else {
