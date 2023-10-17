@@ -11,11 +11,12 @@ const ProfilePage = () => {
   const [profileData, setProfileData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md')); 
+  const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
+  const history = useHistory();
 
   useEffect(() => {
-    // Use the Axios instance to make the authentication check
-    axiosInstance.get('/check-auth')
+    // Check if the user is authenticated by making a request to the server.
+    axiosInstance.get('/check-auth', { withCredentials: true }) // Ensure cookies are sent with the request
       .then(response => {
         if (!response.data.error) {
           // User is authenticated, fetch profile data
@@ -29,13 +30,11 @@ const ProfilePage = () => {
         console.error('Error fetching authentication status:', error);
         setIsLoading(false); // Set loading state to false on error as well
       });
-  }, []);
-
-  const history = useHistory();
+  }, [history]);
 
   const fetchProfileData = () => {
-    // Use the Axios instance to make the GET request for profile data
-    axiosInstance.get('/profile')
+    // Fetch the profile data with authentication cookies.
+    axiosInstance.get('/profile', { withCredentials: true }) // Ensure cookies are sent with the request
       .then(response => {
         setProfileData(response.data);
         setIsLoading(false); // Set loading state to false when data is received
