@@ -1,47 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Grid, Typography, Container, Box, useMediaQuery, CircularProgress, Modal, Button } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  Container,
+  Box,
+  useMediaQuery,
+  CircularProgress,
+  Modal,
+  Button,
+} from '@mui/material';
 import DashboardNav from '../../components/dashboard/DashboardNav';
-import axiosInstance from '../axios.js'; // Import your Axios instance
+import axiosInstance from '../axios.js';
 import Avataaars from 'avataaars';
-import UpdateModal from "../../components/dashboard/profilepage/UpdateModal";
+import UpdateModal from '../../components/dashboard/profilepage/UpdateModal';
 import { useHistory } from 'react-router-dom';
 
-
 const ProfilePage = () => {
-  const [profileData, setProfileData] = useState(null);
+  const [profileData, setProfileData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
   const history = useHistory();
 
   useEffect(() => {
-    // Check if the user is authenticated by making a request to the server.
-    axiosInstance.get('/login', { withCredentials: true }) // Ensure cookies are sent with the request
-      .then(response => {
+    axiosInstance
+      .get('/login', { withCredentials: true })
+      .then((response) => {
         if (!response.data.error) {
-          // User is authenticated, fetch profile data
           fetchProfileData();
         } else {
-          // User is not authenticated, redirect to the login page
           history.push('/login');
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching authentication status:', error);
-        setIsLoading(false); // Set loading state to false on error as well
+        setIsLoading(false);
       });
   }, [history]);
 
   const fetchProfileData = () => {
-    // Fetch the profile data with authentication cookies.
-    axiosInstance.get('/profile', { withCredentials: true }) // Ensure cookies are sent with the request
-      .then(response => {
+    axiosInstance
+      .get('/profile', { withCredentials: true })
+      .then((response) => {
         setProfileData(response.data);
-        setIsLoading(false); // Set loading state to false when data is received
+        setIsLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching user data:', error);
-        setIsLoading(false); // Set loading state to false on error as well
+        setIsLoading(false);
       });
   };
 
@@ -56,14 +64,12 @@ const ProfilePage = () => {
   return (
     <div>
       <DashboardNav />
-      <Container maxWidth={isLargeScreen ? "md" : "sm"} sx={{ mt: 4 }} style={{ marginTop: "90px" }}>
+      <Container maxWidth={isLargeScreen ? 'md' : 'sm'} sx={{ mt: 4 }} style={{ marginTop: '90px' }}>
         {isLoading ? (
-          // Show loading indicator while data is being fetched
           <Box display="flex" justifyContent="center" alignItems="center" height="300px">
             <CircularProgress color="primary" />
           </Box>
-        ) : profileData ? (
-          // Show profile data once it's available
+        ) : Object.keys(profileData).length > 0 ? (
           <>
             <Box display="flex" justifyContent="flex-end" mb={2}>
               <Button variant="outlined" onClick={handleOpenModal}>
@@ -101,7 +107,7 @@ const ProfilePage = () => {
                       <strong>Username:</strong> {profileData.username}
                     </Typography>
                     <Typography variant="body1">
-                      <strong>User ID:</strong> {profileData.id}
+                    <strong>User ID:</strong> {profileData.id}
                     </Typography>
                     <Typography variant="body1">
                       <strong>First Name:</strong> {profileData.first_name}
@@ -127,55 +133,51 @@ const ProfilePage = () => {
             </Card>
 
             <Modal open={isModalOpen} onClose={handleCloseModal}>
-              <UpdateModal
-                profileData={profileData}
-                handleCloseModal={handleCloseModal}
-                setProfileData={setProfileData}
-              />
+              {/* Your UpdateModal component */}
+              <UpdateModal profileData={profileData} handleCloseModal={handleCloseModal} setProfileData={setProfileData} />
             </Modal>
 
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ mb: 2 }}>
-                  <CardContent>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-                      Bank Details
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>Bank Name:</strong> {profileData.bank_name}
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>Branch:</strong> {profileData.branch}
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>IFSC Code:</strong> {profileData.ifsc_code}
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>Account Number:</strong> {profileData.account_number}
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>Bank Balance:</strong> {profileData.bank_balance}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-                      KYC
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>PAN Number:</strong> {profileData.pan_number}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
+            <Grid item xs={12} md={6}>
+              <Card sx={{ mb: 2 }}>
+                <CardContent>
+                  <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+                    Bank Details
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Bank Name:</strong> {profileData.bank_name}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Branch:</strong> {profileData.branch}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>IFSC Code:</strong> {profileData.ifsc_code}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Account Number:</strong> {profileData.account_number}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Bank Balance:</strong> {profileData.bank_balance}
+                  </Typography>
+                </CardContent>
+              </Card>
             </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+                    KYC
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>PAN Number:</strong> {profileData.pan_number}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
           </>
         ) : (
-          // Show a message when profile data is not available
           <Typography variant="h6" align="center" gutterBottom>
             Profile data not found.
           </Typography>
