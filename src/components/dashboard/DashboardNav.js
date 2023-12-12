@@ -38,26 +38,27 @@ const DashboardNav = () => {
   };
 
   const handleLogoutClick = () => {
-    axiosInstance.get('/logout').then((response) => {
-      // Handle logout on the server, then update client state
+    axiosInstance.post('/logout').then((response) => { // Changed to post request
       setIsLoggedIn(false);
       history.push('/login');
     }).catch((error) => {
-      // Handle error
+      console.error('Error during logout:', error);
     });
   };
 
-  // Function to check if the user is authenticated and redirect to login if not
+  // Function to check if the user is authenticated
   const checkAuthentication = () => {
-    axiosInstance.get('/login').then((response) => {
-      if (!response.data.error) {
+    axiosInstance.get('/check-auth').then((response) => {
+      if (response.data.message === 'Authenticated') {
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
         history.push('/login');
       }
     }).catch((error) => {
-      // Handle error
+      console.error('Error checking authentication:', error);
+      setIsLoggedIn(false);
+      history.push('/login');
     });
   };
 
