@@ -1,40 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Grid, Typography, Container, Box, useMediaQuery, CircularProgress, Modal, Button } from '@mui/material';
 import DashboardNav from '../../components/dashboard/DashboardNav';
-import axiosInstance from '../axios.js'; // Import your Axios instance
+import axios from 'axios';
 import Avataaars from 'avataaars';
 import UpdateModal from "../../components/dashboard/profilepage/UpdateModal";
-import { useHistory } from 'react-router-dom';
+import axiosInstance from '../axios';
 
-
-const ProfilePage = () => {
+const ProfilePage = ({ isLoggedIn }) => {
   const [profileData, setProfileData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); 
   const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
-  const history = useHistory();
 
   useEffect(() => {
-    // Check if the user is authenticated by making a request to the server.
-    axiosInstance.get('/login', { withCredentials: true }) // Ensure cookies are sent with the request
-      .then(response => {
-        if (!response.data.error) {
-          // User is authenticated, fetch profile data
-          fetchProfileData();
-        } else {
-          // User is not authenticated, redirect to the login page
-          history.push('/login');
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching authentication status:', error);
-        setIsLoading(false); // Set loading state to false on error as well
-      });
-  }, [history]);
-
-  const fetchProfileData = () => {
-    // Fetch the profile data with authentication cookies.
-    axiosInstance.get('/profile', { withCredentials: true }) // Ensure cookies are sent with the request
+    axiosInstance.get('/profile')
       .then(response => {
         setProfileData(response.data);
         setIsLoading(false); // Set loading state to false when data is received
@@ -43,7 +22,7 @@ const ProfilePage = () => {
         console.error('Error fetching user data:', error);
         setIsLoading(false); // Set loading state to false on error as well
       });
-  };
+  }, []);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -119,7 +98,7 @@ const ProfilePage = () => {
                       <strong>Mobile No:</strong> {profileData.mobile_no}
                     </Typography>
                     <Typography variant="body1">
-                      <strong>Metamask Wallet Address:</strong> {profileData.metamask_address}
+                        <strong>Metamask Wallet Address:</strong> {profileData.metamask_address}
                     </Typography>
                   </Grid>
                 </Grid>
