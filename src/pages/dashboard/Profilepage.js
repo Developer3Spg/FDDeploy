@@ -15,7 +15,7 @@ const ProfilePage = () => {
   const history = useHistory();
 
   useEffect(() => {
-    axios.get('/profile', { withCredentials: true })
+    axiosInstance.get('/profile', { withCredentials: true })
       .then(response => {
         setProfileData(response.data);
         setIsLoading(false); // Set loading state to false when data is received
