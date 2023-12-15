@@ -7,7 +7,7 @@ import UpdateModal from "../../components/dashboard/profilepage/UpdateModal";
 import { useHistory } from 'react-router-dom';
 
 
-const ProfilePage = ({ isLoggedIn }) => {
+const ProfilePage = () => {
   const [profileData, setProfileData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +15,7 @@ const ProfilePage = ({ isLoggedIn }) => {
   const history = useHistory();
 
   useEffect(() => {
-    axiosInstance.get('/profile')
+    axios.get('/profile', { withCredentials: true })
       .then(response => {
         setProfileData(response.data);
         setIsLoading(false); // Set loading state to false when data is received
@@ -25,7 +25,6 @@ const ProfilePage = ({ isLoggedIn }) => {
         setIsLoading(false); // Set loading state to false on error as well
       });
   }, []);
-
 
 
   const handleOpenModal = () => {
