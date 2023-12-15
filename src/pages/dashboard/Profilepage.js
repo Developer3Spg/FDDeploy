@@ -15,7 +15,7 @@ const ProfilePage = ({ isLoggedIn }) => {
   const history = useHistory();
 
   useEffect(() => {
-    axiosInstance.get('/profile', { withCredentials: true }) // Ensure cookies are sent with the request
+    axiosInstance.get('/profile')
       .then(response => {
         setProfileData(response.data);
         setIsLoading(false); // Set loading state to false when data is received
