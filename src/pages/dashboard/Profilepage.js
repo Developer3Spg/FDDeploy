@@ -15,7 +15,26 @@ const ProfilePage = () => {
   const history = useHistory();
 
   useEffect(() => {
-    axiosInstance.get('/profile', { withCredentials: true })
+    // Check if the user is authenticated by making a request to the server.
+    axiosInstance.get('/check-auth', { withCredentials: true }) // Ensure cookies are sent with the request
+      .then(response => {
+        if (!response.data.error) {
+          // User is authenticated, fetch profile data
+          fetchProfileData();
+        } else {
+          // User is not authenticated, redirect to the login page
+          history.push('/login');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching authentication status:', error);
+        setIsLoading(false); // Set loading state to false on error as well
+      });
+  }, [history]);
+
+  const fetchProfileData = () => {
+    // Fetch the profile data with authentication cookies.
+    axiosInstance.get('/profile', { withCredentials: true }) // Ensure cookies are sent with the request
       .then(response => {
         setProfileData(response.data);
         setIsLoading(false); // Set loading state to false when data is received
@@ -24,8 +43,7 @@ const ProfilePage = () => {
         console.error('Error fetching user data:', error);
         setIsLoading(false); // Set loading state to false on error as well
       });
-  }, []);
-
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
