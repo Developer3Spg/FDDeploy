@@ -10,7 +10,7 @@ import {
   TextField,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
+import axiosInstance from '../../../pages/axios.js';
 
 const InvoiceModal = ({ isOpen, onClose }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -20,7 +20,6 @@ const InvoiceModal = ({ isOpen, onClose }) => {
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('sm'));
   const [buyerId, setBuyerId] = useState('');
   const [buyerMetamaskAddress, setBuyerMetamaskAddress] = useState('');
-
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -37,34 +36,65 @@ const InvoiceModal = ({ isOpen, onClose }) => {
       const formData = new FormData();
       formData.append('invoice_file', selectedFile);
 
-      axios
-        .post('/upload_invoice', formData)
-        .then((response) => {
-          console.log('Response from the backend:', response.data);
-          setExtractedData(response.data.invoice_fields);
-          setPdfUrl(response.data.pdf_url);
-          setEditedData(response.data.invoice_fields);
-        })
-        .catch((error) => {
-          console.error('Error from the backend:', error);
-          alert('Failed to extract data from the PDF. Please try again.');
-        });
+      // Check if a valid JWT token exists in local storage
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        // Set the token in Axios instance headers for authorization
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+        // Use the Axios instance to make the POST request to upload the invoice
+        axiosInstance
+          .post('/upload_invoice', formData)
+          .then((response) => {
+            console.log('Response from the backend:', response.data);
+            setExtractedData(response.data.invoice_fields);
+            setPdfUrl(response.data.pdf_url);
+            setEditedData(response.data.invoice_fields);
+          })
+          .catch((error) => {
+            console.error('Error from the backend:', error);
+            alert('Failed to extract data from the PDF. Please try again.');
+          });
+      } else {
+        // No valid token found, handle authentication error
+        console.error('No valid JWT token found.');
+        // You can show an error message or redirect to the login page here.
+      }
     }
   };
 
   const handleSave = () => {
-    const dataToSend = { ...editedData, pdf_url: pdfUrl, buyer_id: buyerId, buyer_metamask_address: buyerMetamaskAddress};
-    
-    axios
-      .post('/submit_invoice', dataToSend)
-      .then((response) => {
-        console.log('Data submitted successfully:', response.data);
-        onClose();
-      })
-      .catch((error) => {
-        console.error('Error submitting data:', error);
-        alert('Failed to submit data. Please try again.');
-      });
+    const dataToSend = {
+      ...editedData,
+      pdf_url: pdfUrl,
+      buyer_id: buyerId,
+      buyer_metamask_address: buyerMetamaskAddress,
+    };
+
+    // Check if a valid JWT token exists in local storage
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      // Set the token in Axios instance headers for authorization
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      // Use the Axios instance to make the POST request to submit the invoice
+      axiosInstance
+        .post('/submit_invoice', dataToSend)
+        .then((response) => {
+          console.log('Data submitted successfully:', response.data);
+          onClose();
+        })
+        .catch((error) => {
+          console.error('Error submitting data:', error);
+          alert('Failed to submit data. Please try again.');
+        });
+    } else {
+      // No valid token found, handle authentication error
+      console.error('No valid JWT token found.');
+      // You can show an error message or redirect to the login page here.
+    }
   };
 
   const handleDueDateChange = (e) => {
@@ -87,8 +117,6 @@ const InvoiceModal = ({ isOpen, onClose }) => {
       }
     }
   };
-  
-  
 
   return (
     <Modal open={isOpen} onClose={onClose}>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery, Container, IconButton, Grid, Button, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Typography } from '@mui/material';
 import { Visibility, ThumbUp, ThumbDown } from '@mui/icons-material';
-import axios from 'axios';
+import axiosInstance from '../axios.js'; // Import your Axios instance
 import DashboardNav from '../../../components/dashboard/DashboardNav';
 
 const InvoicesForApproval = ({ isLoggedIn }) => {
@@ -10,19 +10,32 @@ const InvoicesForApproval = ({ isLoggedIn }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/came_for_approval')
-      .then(response => {
-        setInvoicesData(response.data);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching invoices data:', error);
-        setIsLoading(false);
-      });
+    // Check if a valid JWT token exists in local storage
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      // Set the token in Axios instance headers for authorization
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      // Fetch the invoices data using the token
+      axiosInstance.get('/came_for_approval')
+        .then(response => {
+          setInvoicesData(response.data);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching invoices data:', error);
+          setIsLoading(false);
+        });
+    } else {
+      // No valid token found, handle authentication error
+      console.error('No valid JWT token found.');
+      // You can show an error message or redirect to the login page here.
+    }
   }, []);
 
   const handleApproveInvoice = (invoiceId) => {
-    axios.post(`/approve_invoice/${invoiceId}`)
+    axiosInstance.post(`/approve_invoice/${invoiceId}`)
       .then((response) => {
         console.log(response.data);
         alert(`Invoice with ID ${invoiceId} has been approved.`);

@@ -10,14 +10,26 @@ const UpdateModal = ({ profileData, handleCloseModal, setProfileData }) => {
   const handleFormSubmit = (event) => {
     event.preventDefault();
 
-    // Use the Axios instance to make the PUT request to update the user's profile data
-    axiosInstance.put('/profile', updatedProfileData)
-      .then(response => {
-        setProfileData(updatedProfileData);
-        setSuccessMessage('Profile updated successfully.');
-        handleCloseModal();
-      })
-      .catch(error => console.error('Error updating user data:', error));
+    // Check if a valid JWT token exists in local storage
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      // Set the token in Axios instance headers for authorization
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      // Use the Axios instance to make the PUT request to update the user's profile data
+      axiosInstance.put('/profile', updatedProfileData)
+        .then(response => {
+          setProfileData(updatedProfileData);
+          setSuccessMessage('Profile updated successfully.');
+          handleCloseModal();
+        })
+        .catch(error => console.error('Error updating user data:', error));
+    } else {
+      // No valid token found, handle authentication error
+      console.error('No valid JWT token found.');
+      // You can show an error message or redirect to the login page here.
+    }
   };
 
   const handleInputChange = (event) => {
@@ -31,6 +43,7 @@ const UpdateModal = ({ profileData, handleCloseModal, setProfileData }) => {
   const handleCloseSnackbar = () => {
     setSuccessMessage('');
   };
+
 
   return (
     <Box sx={{

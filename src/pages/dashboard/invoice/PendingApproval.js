@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery, Container, IconButton, Grid, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Typography, Button } from '@mui/material';
 import { Delete, Visibility } from '@mui/icons-material';
-import axios from 'axios'
+import axiosInstance from '../axios.js'; // Import your Axios instance
 import DashboardNav from '../../../components/dashboard/DashboardNav';
 
 const PendingApprovalPDFs = ({ isLoggedIn }) => {
@@ -10,19 +10,32 @@ const PendingApprovalPDFs = ({ isLoggedIn }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/pending_approval_invoices')
-      .then(response => {
-        setInvoicesData(response.data);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching user data:', error);
-        setIsLoading(false);
-      });
+    // Check if a valid JWT token exists in local storage
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      // Set the token in Axios instance headers for authorization
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      // Fetch the pending approval PDFs data using the token
+      axiosInstance.get('/pending_approval_invoices')
+        .then(response => {
+          setInvoicesData(response.data);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching pending approval PDFs data:', error);
+          setIsLoading(false);
+        });
+    } else {
+      // No valid token found, handle authentication error
+      console.error('No valid JWT token found.');
+      // You can show an error message or redirect to the login page here.
+    }
   }, []);
 
   const handleDeleteInvoice = (invoiceId) => {
-    axios.delete(`/invoices/${invoiceId}`)
+    axiosInstance.delete(`/invoices/${invoiceId}`)
       .then((response) => {
         setInvoicesData((prevInvoices) =>
           prevInvoices.filter((invoice) => invoice.id !== invoiceId)
@@ -36,7 +49,7 @@ const PendingApprovalPDFs = ({ isLoggedIn }) => {
   };
 
   const handleSendForApproval = (invoiceId) => {
-    axios.post(`/invoices/pending_approval_pdfs/${invoiceId}`)
+    axiosInstance.post(`/invoices/pending_approval_pdfs/${invoiceId}`)
       .then(response => {
       })
       .catch(error => {
