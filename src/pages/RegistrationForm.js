@@ -62,8 +62,11 @@ const RegistrationForm = () => {
     axiosInstance
       .post('/register', formData)
       .then(function (response) {
-        console.log(response.data);
+        // Store the JWT token in local storage
+        localStorage.setItem('token', response.data.access_token);
+        // Update success message
         setSuccessMessage(response.data.message);
+        // Clear form data
         setFormData({
           first_name: '',
           last_name: '',
@@ -83,13 +86,15 @@ const RegistrationForm = () => {
           metamask_address: '',
           bank_balance: '',
         });
+        // Optional: Redirect to another page after successful registration
+        // window.location.href = '/login'; // or to any other route
       })
       .catch(function (error) {
         console.error(error.response?.data?.error || 'Unknown error');
         setErrorMessage(error.response?.data?.error || 'Unknown error');
       });
   };
-
+  
   const handleCloseSnackbar = () => {
     setErrorMessage('');
     setSuccessMessage('');

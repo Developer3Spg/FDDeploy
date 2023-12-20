@@ -6,42 +6,41 @@ import Avataaars from 'avataaars';
 import UpdateModal from "../../components/dashboard/profilepage/UpdateModal";
 import { useHistory } from 'react-router-dom';
 
-  const ProfilePage = () => {
-    const [profileData, setProfileData] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
-    const history = useHistory();
-  
-    useEffect(() => {
-      axiosInstance.get('/check-auth', { withCredentials: true })
-        .then(response => {
-          console.log("Check-auth Response:", response); // Debugging
-          if (!response.data.error) {
-            fetchProfileData();
-          } else {
-            history.push('/login');
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching authentication status:', error);
-          setIsLoading(false);
-        });
-    }, [history]);
-  
-    const fetchProfileData = () => {
-      axiosInstance.get('/profile', { withCredentials: true })
-        .then(response => {
-          console.log("Profile Data Response:", response); // Debugging
-          setProfileData(response.data);
-          setIsLoading(false);
-        })
-        .catch(error => {
-          console.error('Error fetching user data:', error);
-          setIsLoading(false);
-        });
-    };
-  
+const ProfilePage = () => {
+  const [profileData, setProfileData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
+  const history = useHistory();
+
+  useEffect(() => {
+    // Check if a valid JWT token exists in local storage
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      // Set the token in Axios instance headers for authorization
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      // Fetch the user's profile data using the token
+      fetchProfileData();
+    } else {
+      // No valid token found, redirect to the login page
+      history.push('/login');
+    }
+  }, [history]);
+
+  const fetchProfileData = () => {
+    axiosInstance.get('/profile')
+      .then(response => {
+        console.log("Profile Data Response:", response); // Debugging
+        setProfileData(response.data);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+        setIsLoading(false);
+      });
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);

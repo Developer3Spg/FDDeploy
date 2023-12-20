@@ -1,10 +1,13 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const axiosInstance = axios.create({
   baseURL: 'https://mezzprobackend.onrender.com/', // Replace with your backend URL
+});
 
-  withCredentials: true, // This is important to allow cookies to be sent with the request
+axiosInstance.interceptors.request.use(function (config) {
+  const token = localStorage.getItem('token'); // Assuming you store your token in local storage
+  config.headers.Authorization = token ? `Bearer ${token}` : '';
+  return config;
 });
 
 export default axiosInstance;

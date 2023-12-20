@@ -34,12 +34,14 @@ const LoginForm = ({ handleLogin }) => {
     const isValid = validateForm();
     if (isValid) {
       try {
-        setIsLoading(true);// Use the Axios instance to make the POST request
+        setIsLoading(true);
         const response = await axiosInstance.post('/login', formData);
 
         if (response.status === 200) {
           console.log('Login successful');
           setShowErrorMessage(false);
+          // Store the JWT token in local storage
+          localStorage.setItem('token', response.data.access_token);
           handleLogin();
         } else {
           console.log('Login failed');
