@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery, Container, IconButton, Grid, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Typography, Button } from '@mui/material';
 import { Delete, Visibility } from '@mui/icons-material';
-import axiosInstance from '../axios.js'; // Import your Axios instance
+import axiosInstance from '../../axios.js'; // Import your Axios instance
 import DashboardNav from '../../../components/dashboard/DashboardNav';
 
 const PendingApprovalPDFs = ({ isLoggedIn }) => {

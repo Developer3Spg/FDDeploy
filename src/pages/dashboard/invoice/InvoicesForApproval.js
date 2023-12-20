@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery, Container, IconButton, Grid, Button, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Typography } from '@mui/material';
 import { Visibility, ThumbUp, ThumbDown } from '@mui/icons-material';
-import axiosInstance from '../axios.js'; // Import your Axios instance
+import axiosInstance from '../../axios.js'; // Import your Axios instance
 import DashboardNav from '../../../components/dashboard/DashboardNav';
 
 const InvoicesForApproval = ({ isLoggedIn }) => {
