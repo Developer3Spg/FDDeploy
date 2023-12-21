@@ -53,8 +53,8 @@ const Tokens = () => {
 
   const fetchInvoiceData = async (invoiceId) => {
     try {
-      const response = await fetch(`/fetch_invoice_data?invoice_id=${invoiceId}`);
-      const data = await response.json();
+      const response = await axiosInstance.get(`/fetch_invoice_data?invoice_id=${invoiceId}`);
+      const data = response.data;
       if (data.id) {
         populateFieldsWithInvoiceData(data);
       } else {
@@ -65,7 +65,6 @@ const Tokens = () => {
     }
   };
   
-
 
   const populateFieldsWithInvoiceData = (invoiceData) => {
     setSelectedInvoice(invoiceData);
@@ -87,24 +86,25 @@ const Tokens = () => {
   
   const validateMintTokens = async (invoiceAmount, requestedTokens) => {
     try {
-        const response = await fetch('/validate_mint_tokens', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                invoice_amount: invoiceAmount,
-                requested_tokens: requestedTokens,
-            }),
-        });
+      const response = await axiosInstance.post('/validate_mint_tokens', {
+        invoice_amount: invoiceAmount,
+        requested_tokens: requestedTokens,
+      });
 
-        const validationData = await response.json();
-        return validationData;  // Return the validation data to the caller
+      const validationData = response.data;
+
+      if (validationData.valid) {
+        // Validation successful, continue with minting
+        await mintTokens(); // Call the mintTokens function if validation is successful
+      } else {
+        // Show validation error message
+        showNotification(validationData.message, 'error');
+      }
     } catch (error) {
-        console.error('Error validating mint tokens:', error);
-        return { valid: false, message: 'An error occurred while validating mint tokens' };
+      console.error('Error validating mint tokens:', error);
+      showNotification('An error occurred while validating mint tokens', 'error');
     }
-};
+  };
 
 
 
