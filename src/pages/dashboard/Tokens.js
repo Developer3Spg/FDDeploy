@@ -20,31 +20,40 @@ const Tokens = () => {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
 
  
-
   useEffect(() => {
-    fetch('/tokens')
+    fetch('/tokens', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
       .then(response => response.json())
       .then(data => {
         if ('message' in data) {
           setAccessStatus(data.message);
         } else if ('error' in data) {
           setAccessStatus(data.error);
-        }
+        }  
       })
       .catch(error => {
         console.error('Error fetching access status:', error);
       });
   }, []);
 
+
   const fetchInvoiceData = async (invoiceId) => {
     try {
-      const response = await fetch(`/fetch_invoice_data?invoice_id=${invoiceId}`);
+      const response = await fetch(`/fetch_invoice_data?invoice_id=${invoiceId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
       const data = await response.json();
       if (data.id) {
         populateFieldsWithInvoiceData(data);
       } else {
         console.log('Invoice not found');
       }
+      
     } catch (error) {
       console.error('Error fetching invoice data:', error);
     }
@@ -632,32 +641,61 @@ const Tokens = () => {
     }
   };
 
-  const mintTokens = async () => {
-    const dueDateTimestamp = new Date(dueDate).getTime() / 1000;
+//   const mintTokens = async () => {
+//     const dueDateTimestamp = new Date(dueDate).getTime() / 1000;
 
-    try {
-        const validationResponse = await fetch('/validate_mint_tokens', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                invoice_amount: amount,  // Replace with the correct field name
-                requested_tokens: amount,  // You can use the same amount for tokens requested
-            }),
-        });
+//     try {
+//         const validationResponse = await fetch('/validate_mint_tokens', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//                 invoice_amount: amount,  // Replace with the correct field name
+//                 requested_tokens: amount,  // You can use the same amount for tokens requested
+//             }),
+//         });
 
-        const validationData = await validationResponse.json();
+//         const validationData = await validationResponse.json();
 
-        if (validationData.valid) {
-            await invoiceContract.methods.tokenizeInvoice(sellerAddress, buyerAddress, amount, dueDateTimestamp).send({ from: account });
-            showNotification('Invoice tokens minted successfully!', 'success');
-        } else {
-            showNotification(validationData.message, 'error');
-        }
-    } catch (error) {
-        showNotification('An error occurred while minting invoice tokens. Please try again.', 'error');
+//         if (validationData.valid) {
+//             await invoiceContract.methods.tokenizeInvoice(sellerAddress, buyerAddress, amount, dueDateTimestamp).send({ from: account });
+//             showNotification('Invoice tokens minted successfully!', 'success');
+//         } else {
+//             showNotification(validationData.message, 'error');
+//         }
+//     } catch (error) {
+//         showNotification('An error occurred while minting invoice tokens. Please try again.', 'error');
+//     }
+// };
+
+const mintTokens = async () => {
+  const dueDateTimestamp = new Date(dueDate).getTime() / 1000;
+
+  try {
+    const validationResponse = await fetch('/validate_mint_tokens', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({
+        invoice_amount: amount,
+        requested_tokens: amount,
+      }),
+    });
+
+    const validationData = await validationResponse.json();
+
+    if (validationData.valid) {
+      await invoiceContract.methods.tokenizeInvoice(sellerAddress, buyerAddress, amount, dueDateTimestamp).send({ from: account });
+      showNotification('Invoice tokens minted successfully!', 'success');      
+    } else {
+      showNotification(validationData.message, 'error');
     }
+  } catch (error) {
+    showNotification('An error occurred while minting invoice tokens. Please try again.', 'error');
+  }
 };
 
 
