@@ -53,7 +53,12 @@ const Tokens = () => {
 
   const fetchInvoiceData = async (invoiceId) => {
     try {
-      const response = await axiosInstance.get(`/fetch_invoice_data?invoice_id=${invoiceId}`);
+      const token = localStorage.getItem('token'); // Get the JWT token from local storage
+      const headers = {
+        'Authorization': `Bearer ${token}`, // Include the JWT token in the Authorization header
+      };
+  
+      const response = await axiosInstance.get(`/fetch_invoice_data?invoice_id=${invoiceId}`, { headers });
       const data = response.data;
       if (data.id !== undefined) {
         populateFieldsWithInvoiceData(data);
