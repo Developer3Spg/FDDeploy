@@ -55,7 +55,7 @@ const Tokens = () => {
     try {
       const response = await axiosInstance.get(`/fetch_invoice_data?invoice_id=${invoiceId}`);
       const data = response.data;
-      if (data.id) {
+      if (data.id !== undefined) {
         populateFieldsWithInvoiceData(data);
       } else {
         console.log('Invoice not found');
@@ -65,11 +65,10 @@ const Tokens = () => {
     }
   };
   
-
   const populateFieldsWithInvoiceData = (invoiceData) => {
     setSelectedInvoice(invoiceData);
     if (invoiceData) {
-      setSellerAddress(invoiceData.metamask_address);
+      setSellerAddress(invoiceData.buyer_metamask_address); // Note: Updated field name
       setBuyerAddress(invoiceData.buyer_metamask_address);
       setAmount(invoiceData.total_amount.toString());
       setDueDate(invoiceData.due_date);
@@ -77,7 +76,6 @@ const Tokens = () => {
     }
   };
   
-
   const handleFetchInvoice = () => {
     const invoiceId = document.getElementById('invoiceIdInput').value;
     fetchInvoiceData(invoiceId);
