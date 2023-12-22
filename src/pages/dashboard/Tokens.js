@@ -69,7 +69,7 @@ const Tokens = () => {
       console.error('Error fetching invoice data:', error);
     }
   };
-  
+
   const populateFieldsWithInvoiceData = (invoiceData) => {
     setSelectedInvoice(invoiceData);
     if (invoiceData) {
@@ -654,18 +654,13 @@ const Tokens = () => {
     const dueDateTimestamp = new Date(dueDate).getTime() / 1000;
 
     try {
-        const validationResponse = await fetch('/validate_mint_tokens', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                invoice_amount: amount,  // Replace with the correct field name
-                requested_tokens: amount,  // You can use the same amount for tokens requested
-            }),
-        });
-
-        const validationData = await validationResponse.json();
+      // Send a POST request to the /validate_mint_tokens endpoint
+      const validationResponse = await axiosInstance.post('/validate_mint_tokens', {
+        invoice_amount: amount, // Replace with the correct field name
+        requested_tokens: amount, // You can use the same amount for tokens requested
+      });
+  
+      const validationData = validationResponse.data; 
 
         if (validationData.valid) {
             await invoiceContract.methods.tokenizeInvoice(sellerAddress, buyerAddress, amount, dueDateTimestamp).send({ from: account });
